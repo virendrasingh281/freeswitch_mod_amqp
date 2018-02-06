@@ -1,10 +1,9 @@
-# freeswitch_mod_amqp
                       _                                
   _ __ ___   ___   __| |    __ _ _ __ ___   __ _ _ __  
  | '_ ` _ \ / _ \ / _` |   / _` | '_ ` _ \ / _` | '_ \ 
  | | | | | | (_) | (_| |  | (_| | | | | | | (_| | |_) |
  |_| |_| |_|\___/ \__,_|___\__,_|_| |_| |_|\__, | .__/ 
-                      |_____|                 |_|_|    by Aeriandi
+                      |_____|                 |_|_|    by Virendra
 
 
 Contents
@@ -119,4 +118,3 @@ If mod_amqp experiences back-pressure from the AMQP broker, its internal buffer 
 --------
 
 The SHA for the revision of librabbitmq-c1 that is included is 1c213703c9fdd747bc71ea4f64943c3b4269f8cf.
- 
