@@ -86,6 +86,7 @@ typedef struct {
 
   char *exchange;
   char *exchange_type;
+  char *routing_key;
   int exchange_durable;
   int exchange_auto_delete;
   int delivery_mode;
