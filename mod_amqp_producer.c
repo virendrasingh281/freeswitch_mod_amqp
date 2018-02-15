@@ -419,21 +419,22 @@ switch_status_t mod_amqp_producer_send(mod_amqp_producer_profile_t *profile, mod
 		messageTableEntries[1].value.value.u64 = timestamp;
 	}
 
-	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Mrofile exchange: %s \n", profile->exchange);
-	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Msg routing key: %s \n", msg->routing_key);
-	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Msg pjson: %s \n", msg->pjson);
+	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "FS profile exchange: %s \n", profile->exchange);
+	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "FS msg routing key: %s \n", msg->routing_key);
+	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "FS msg Static routing key: qa_fs2_bindkey \n");
+	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "FS msg pjson: %s \n", msg->pjson);
 	status = amqp_basic_publish(
 								profile->conn_active->state,
 								1,
 								amqp_cstring_bytes(profile->exchange),
-								amqp_cstring_bytes(msg->routing_key),
+								amqp_cstring_bytes("qa_fs_bindkey"),
 								1,
 								0,
 								&props,
 								amqp_cstring_bytes(msg->pjson));
 
 	
-	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Printing status: %d \n", status);
+	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "GVB Printing status: %d \n", status);
 	if (status < 0) {
 		const char *errstr = amqp_error_string2(-status);
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Profile[%s] failed to send event on connection[%s]: %s\n",
