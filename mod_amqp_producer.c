@@ -167,7 +167,7 @@ switch_status_t mod_amqp_producer_create(char *name, switch_xml_t cfg)
 	char  *argv[SWITCH_EVENT_ALL];
 	switch_xml_t params, param, connections, connection;
 	switch_threadattr_t *thd_attr = NULL;
-	char *exchange = NULL, *exchange_type = NULL, *content_type = NULL;
+	char *exchange = NULL, *exchange_type = NULL, *content_type = NULL, *routing_key = NULL;
 	int exchange_durable = 1; /* durable */
 	int delivery_mode = -1;
 	int delivery_timestamp = 1;
@@ -232,6 +232,8 @@ switch_status_t mod_amqp_producer_create(char *name, switch_xml_t cfg)
 					profile->enable_fallback_format_fields = 1;
 					switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "amqp fallback format fields enabled\n");
 				}
+			} else if (!strncmp(var, "routing-key", 13)) {
+				routing_key = switch_core_strdup(profile->pool, val);
 			} else if (!strncmp(var, "exchange-type", 13)) {
 				exchange_type = switch_core_strdup(profile->pool, val);
 			} else if (!strncmp(var, "exchange-name", 13)) {
@@ -278,6 +280,7 @@ switch_status_t mod_amqp_producer_create(char *name, switch_xml_t cfg)
 	/* Handle defaults of string types */
 	profile->exchange = exchange ? exchange : switch_core_strdup(profile->pool, "TAP.Events");
 	profile->exchange_type = exchange_type ? exchange_type : switch_core_strdup(profile->pool, "topic");
+	profile->routing_key = routing_key ? routing_key : switch_core_strdup(profile->pool, "fsbind");
 	profile->exchange_durable = exchange_durable;
 	profile->delivery_mode = delivery_mode;
 	profile->delivery_timestamp = delivery_timestamp;
@@ -421,13 +424,13 @@ switch_status_t mod_amqp_producer_send(mod_amqp_producer_profile_t *profile, mod
 
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "FS profile exchange: %s \n", profile->exchange);
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "FS msg routing key: %s \n", msg->routing_key);
-	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "FS msg Static routing key: qa_fs2_bindkey \n");
+	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "FS msg routing key ok : %s \n", profile->routing_key);
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "FS msg pjson: %s \n", msg->pjson);
 	status = amqp_basic_publish(
 								profile->conn_active->state,
 								1,
 								amqp_cstring_bytes(profile->exchange),
-								amqp_cstring_bytes("qa_fs_bindkey"),
+								amqp_cstring_bytes(profile->routing_key),
 								1,
 								0,
 								&props,
